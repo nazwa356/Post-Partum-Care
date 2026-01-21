@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PostPartum Care - Sahabat Pemulihan Bunda</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-pink: #FFD1DC;
+            --primary-dark-pink: #ffb7c5;
+            --sage-green: #C1E1C1;
+            --sage-text: #556B2F;
+            --danger-red: #e74c3c;
+            --safe-blue: #3498db;
+            --cream-bg: #FDFBF7;
+            --white: #FFFFFF;
+            --radius: 20px;
+            --shadow: 0 5px 20px rgba(0,0,0,0.05);
+            --transition: all 0.3s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background-color: var(--cream-bg); 
+            font-family: 'Inter', sans-serif; 
+            color: #333; 
+            padding-bottom: 90px; 
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; }
+
+        /* HEADER */
+        header {
+            background: var(--white); 
+            padding: 1rem 5%; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            box-shadow: var(--shadow); 
+            position: sticky; 
+            top: 0; 
+            z-index: 100;
+        }
+        .logo { font-size: 1.2rem; font-weight: 700; color: var(--sage-text); display: flex; align-items: center; gap: 8px; }
+        .logo i { color: var(--primary-dark-pink); }
+
+        /* MODAL USER INFO */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            display: flex; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-box { 
+            background: white; padding: 25px; border-radius: var(--radius); 
+            width: 90%; max-width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .form-control { 
+            width: 100%; padding: 12px; border: 1px solid #ddd; 
+            border-radius: 12px; margin-bottom: 15px; font-family: inherit; 
+            transition: var(--transition);
+        }
+        .form-control:focus { outline: none; border-color: var(--sage-text); background: #fcfcfc; }
+        
+        .btn-submit { 
+            background: var(--sage-text); color: white; border: none; 
+            padding: 15px; width: 100%; border-radius: 12px; 
+            cursor: pointer; font-weight: 600; margin-top: 10px; 
+            transition: var(--transition); box-shadow: 0 4px 10px rgba(85, 107, 47, 0.2);
+        }
+        .btn-submit:active { transform: scale(0.98); }
+
+        /* CONTAINER */
+        .container { padding: 20px 5%; max-width: 800px; margin: 0 auto; }
+        .content-section { display: none; animation: fadeIn 0.4s ease-out; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { 
+            background: white; padding: 25px; border-radius: var(--radius); 
+            box-shadow: var(--shadow); margin-bottom: 20px; position: relative; overflow: hidden;
+        }
+        .days-badge { 
+            background: var(--primary-pink); color: #8e4050; padding: 6px 18px; 
+            border-radius: 30px; font-weight: bold; font-size: 0.9rem; display: inline-block;
+        }
+
+        /* PROGRESS BAR */
+        .progress-container {
+            background: #eee; height: 12px; border-radius: 6px; overflow: hidden; margin-top: 5px;
+        }
+        #barProg {
+            background: linear-gradient(90deg, var(--sage-green), var(--sage-text)); 
+            height: 100%; width: 0%; transition: width 1s ease-in-out;
+        }
+
+        /* SELF CHECK LIST */
+        .check-item { 
+            display: flex; align-items: center; gap: 12px; 
+            background: #fff5f7; padding: 15px; border-radius: 12px; 
+            margin-bottom: 10px; font-size: 0.95rem; border: 1px solid #ffe4e9; 
+            color: #c0392b; font-weight: 500; cursor: pointer; transition: var(--transition);
+        }
+        .check-item:hover { background: #ffe0e6; }
+        .check-item input[type="checkbox"] { 
+            width: 20px; height: 20px; accent-color: var(--danger-red); cursor: pointer; 
+        }
+        
+        /* HASIL EVALUASI STYLE */
+        #evalResult { display: none; margin-top: 25px; border-top: 2px dashed #eee; padding-top: 20px; }
+        .result-box { padding: 20px; border-radius: 15px; margin-bottom: 15px; border-left: 6px solid; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .result-danger { background: #fff0f0; border-color: var(--danger-red); }
+        .result-safe { background: #f0f9ff; border-color: var(--safe-blue); }
+        .res-title { font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; font-size: 1.05rem; }
+        .res-desc { font-size: 0.9rem; color: #555; line-height: 1.5; margin-bottom: 10px; }
+        .res-normal { font-size: 0.85rem; color: #2ecc71; background: white; padding: 8px 12px; border-radius: 8px; display: inline-block; font-weight: 600; border: 1px solid #e8f8f5; }
+
+        /* JURNAL */
+        .jurnal-input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+        .jurnal-box { background: #fafafa; padding: 15px; border-radius: 15px; border: 1px solid #f0f0f0; }
+        .jurnal-box h4 { font-size: 0.9rem; margin-bottom: 12px; color: var(--sage-text); display: flex; align-items: center; gap: 8px; }
+        .jurnal-box select, .jurnal-box input { 
+            width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd; 
+            background: white; font-size: 0.9rem;
+        }
+
+        /* MATERI LIST */
+        .topic-group { margin-bottom: 25px; }
+        .topic-title { 
+            color: var(--sage-text); margin-bottom: 15px; font-size: 1.1rem; 
+            border-left: 5px solid var(--primary-pink); padding-left: 15px; 
+            font-weight: 700;
+        }
+        .topic-list { display: grid; gap: 12px; }
+        .topic-link {
+            display: flex; align-items: center; background: white; border: 1px solid #eee;
+            padding: 18px; border-radius: 16px; text-decoration: none; color: #444; 
+            transition: var(--transition); box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            position: relative; overflow: hidden;
+        }
+        .topic-link:hover { background: var(--sage-green); color: var(--sage-text); border-color: var(--sage-green); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(193, 225, 193, 0.4); }
+        .topic-link:hover .topic-icon { background: white; color: var(--sage-text); }
+        .topic-icon { 
+            width: 45px; height: 45px; background: var(--cream-bg); border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            margin-right: 15px; color: var(--sage-text); font-size: 1.2rem; 
+            transition: var(--transition); flex-shrink: 0;
+        }
+        .topic-text { font-size: 0.95rem; font-weight: 600; }
+        .topic-link i.fa-chevron-right { margin-left: auto; font-size: 0.8rem; opacity: 0.5; }
+
+        /* BOTTOM NAV */
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 80px; 
+            background: white; display: flex; justify-content: space-around; 
+            align-items: center; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); z-index: 1000; 
+            border-top-left-radius: 25px; border-top-right-radius: 25px;
+        }
+        .nav-item { text-align: center; color: #ccc; cursor: pointer; flex: 1; transition: var(--transition); position: relative; }
+        .nav-item.active { color: var(--sage-text); transform: translateY(-5px); }
+        .nav-item i { font-size: 1.4rem; margin-bottom: 6px; display: block; }
+        .nav-item span { font-size: 0.75rem; font-weight: 600; }
+        .nav-item.active::after {
+            content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
+            width: 5px; height: 5px; background: var(--sage-text); border-radius: 50%;
+        }
+
+        /* CHATBOT */
+        .chat-float-btn { 
+            position: fixed; bottom: 100px; right: 20px; 
+            background: var(--sage-text); color: white; width: 60px; height: 60px; 
+            border-radius: 50%; display: flex; justify-content: center; align-items: center; 
+            box-shadow: 0 5px 20px rgba(85, 107, 47, 0.4); cursor: pointer; 
+            z-index: 1500; font-size: 1.5rem; transition: var(--transition);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .chat-float-btn:hover { transform: scale(1.1); }
+        
+        .chat-window { 
+            display: none; position: fixed; bottom: 170px; right: 20px; 
+            width: 320px; height: 450px; background: white; border-radius: 20px; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15); z-index: 1500; 
+            flex-direction: column; overflow: hidden; border: 1px solid #f0f0f0;
+            animation: slideUpChat 0.3s ease-out;
+        }
+        @keyframes slideUpChat { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        .chat-header { 
+            background: var(--sage-green); padding: 18px; color: var(--sage-text); 
+            font-weight: bold; display: flex; justify-content: space-between; align-items: center;
+        }
+        .chat-body { 
+            flex: 1; padding: 15px; overflow-y: auto; background: #fdfdfd; font-size: 0.9rem; 
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .msg { padding: 10px 15px; border-radius: 15px; max-width: 80%; line-height: 1.4; font-size: 0.85rem; }
+        .msg.bot { background: #f0f0f0; color: #333; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .msg.user { background: var(--primary-pink); color: #555; align-self: flex-end; border-bottom-right-radius: 2px; }
+        
+        .chat-footer { padding: 12px; border-top: 1px solid #eee; display: flex; gap: 8px; background: white; }
+        .chat-input { flex: 1; padding: 10px 15px; border: 1px solid #ddd; border-radius: 25px; outline: none; font-size: 0.9rem; }
+        .chat-input:focus { border-color: var(--sage-text); }
+        .chat-send { 
+            background: var(--sage-text); color: white; border: none; 
+            width: 40px; height: 40px; border-radius: 50%; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center;
+            transition: var(--transition);
+        }
+        .chat-send:hover { background: #445525; }
+
+        /* CUSTOM TOAST NOTIFICATION */
+        #toast {
+            visibility: hidden; min-width: 250px; margin-left: -125px; 
+            background-color: #333; color: #fff; text-align: center; 
+            border-radius: 50px; padding: 16px; position: fixed; z-index: 3000; 
+            left: 50%; bottom: 30px; font-size: 0.9rem; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            opacity: 0; transition: opacity 0.3s, bottom 0.3s;
+        }
+        #toast.show { visibility: visible; opacity: 1; bottom: 100px; }
+
+        /* RESPONSIVE */
+        @media (max-width: 480px) {
+            .jurnal-input-grid { grid-template-columns: 1fr; }
+            .jurnal-box[style*="grid-column"] { grid-column: span 1 !important; }
+            .chat-window { width: 90%; right: 5%; bottom: 100px; height: 60vh; }
+            .days-badge { font-size: 0.8rem; }
+            .logo { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MODAL USER -->
+    <div class="modal-overlay" id="modalId">
+        <div class="modal-box">
+            <h2 style="color: var(--sage-text); margin-bottom: 5px;"><i class="fas fa-user-circle"></i> Selamat Datang</h2>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 25px;">Mari sesuaikan profil pemulihan Bunda.</p>
+            <form id="formId">
+                <input type="text" id="inName" class="form-control" placeholder="Nama Panggilan Bunda" required autocomplete="off">
+                <select id="inRole" class="form-control">
+                    <option value="Ibu Nifas">Ibu Nifas</option>
+                    <option value="Ibu Menyusui">Ibu Menyusui</option>
+                    <option value="Pendamping">Suami / Pendamping</option>
+                </select>
+                <div id="nifasInputGroup">
+                    <label style="font-size:0.85rem; font-weight:600; margin-bottom:8px; display:block; color:#555;">Hari Nifas Ke- (1-42)</label>
+                    <input type="number" id="inDay" class="form-control" min="1" max="42" value="1" placeholder="Contoh: 3">
+                </div>
+                <button type="submit" class="btn-submit">Masuk ke Dashboard</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo"><i class="fas fa-baby-carriage"></i> PostPartum Care</div>
+        <div id="userLabel" style="font-size: 0.85rem; background: var(--sage-green); padding: 6px 15px; border-radius: 20px; font-weight: 700; color: var(--sage-text); box-shadow: 0 2px 5px rgba(0,0,0,0.05);">Bunda</div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+        
+        <!-- BERANDA SECTION -->
+        <div id="beranda" class="content-section active">
+            <div class="card" style="text-align: center; border-bottom: 5px solid var(--primary-pink);">
+                <div style="margin-bottom: 10px;">
+                    <span class="days-badge">Hari Ke-<span id="displayDay">0</span></span>
+                </div>
+                <h3 style="margin-top: 10px; color: #444;">Status Pemulihan</h3>
+                <p id="remindDay" style="font-size: 0.9rem; color: #777; margin-bottom: 15px;">Sisa 42 hari lagi untuk pulih sempurna.</p>
+                <div class="progress-container">
+                    <div id="barProg"></div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 15px; font-size: 1.2rem; color: #444;"><i class="fas fa-notes-medical" style="color: var(--sage-text);"></i> Pemantauan Harian</h3>
+            <div class="card">
+                <div class="jurnal-input-grid">
+                    <div class="jurnal-box">
+                        <h4><i class="fas fa-tint" style="color: #e74c3c;"></i> Cairan (Lochea)</h4>
+                        <select id="jurnalLochea">
+                            <option>Rubra (Merah Segar)</option>
+                            <option>Sanguinolenta (Merah Kuning)</option>
+                            <option>Serosa (Kuning Kecoklatan)</option>
+                            <option>Alba (Putih/Bening)</option>
+                        </select>
+                    </div>
+                    <div class="jurnal-box">
+                        <h4><i class="fas fa-baby" style="color: #3498db;"></i> Menyusui</h4>
+                        <input type="number" id="jurnalAsi" placeholder="Frekuensi (kali)">
+                    </div>
+                    <div class="jurnal-box" style="grid-column: span 2;">
+                        <h4><i class="fas fa-heart" style="color: #e91e63;"></i> Perasaan Bunda</h4>
+                        <select id="jurnalMood">
+                            <option>🥰 Senang & Bersemangat</option>
+                            <option>😌 Lelah tapi Bahagia</option>
+                            <option>😢 Sedih / Cemas (Baby Blues?)</option>
+                            <option>😫 Sangat Lelah / Putus Asa</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn-submit" style="padding: 12px; font-size: 0.9rem; margin-top: 20px;" onclick="saveJurnal()">Simpan Jurnal Hari Ini</button>
+            </div>
+
+            <h3 style="margin-bottom: 15px; font-size: 1.2rem; color: #444;"><i class="fas fa-user-md" style="color: var(--danger-red);"></i> Cek Tanda Bahaya</h3>
+            <div class="card">
+                <p style="font-size:0.9rem; color:#666; margin-bottom:15px; background: #fdfdfd; padding: 10px; border-radius: 8px; border-left: 3px solid #ccc;">Centang jika Bunda merasakan keluhan di bawah ini:</p>
+                
+                <label class="check-item"><input type="checkbox" class="danger-check" value="0"> Perdarahan > 1 pembalut penuh / jam</label>
+                <label class="check-item"><input type="checkbox" class="danger-check" value="1"> Demam Tinggi (>38°C) / Menggigil</label>
+                <label class="check-item"><input type="checkbox" class="danger-check" value="2"> Cairan nifas berbau busuk menyengat</label>
+                <label class="check-item"><input type="checkbox" class="danger-check" value="3"> Sakit kepala hebat / Pandangan kabur</label>
+
+                <button class="btn-submit" style="background: var(--danger-red); box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);" onclick="evaluasiKondisi()">Analisa Keluhan Saya</button>
+
+                <div id="evalResult"></div>
+            </div>
+        </div>
+
+        <!-- MATERI SECTION -->
+        <div id="materi" class="content-section">
+            <h2 style="margin-bottom: 20px; color: var(--sage-text);">Edukasi & Panduan</h2>
+            
+            <div class="topic-group">
+                <h3 class="topic-title">Menyusui</h3>
+                <div class="topic-list">
+                    <a href="https://drive.google.com/drive/folders/1CcjUABgl4YFClhXRHmxASpm7kUjQNkZI?usp=drive_link" class="topic-link" target="_blank">
+                        <div class="topic-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                        <div style="flex:1;">
+                            <span class="topic-text">Perawatan Payudara</span>
+                            <div style="font-size: 0.75rem; color: #888;">Breast-care agar ASI lancar</div>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    
+                    <a href="https://drive.google.com/drive/folders/1EWna1CK4LbiW-GozaLQqZ3ho0pSn2EeC?usp=drive_link" class="topic-link" target="_blank">
+                        <div class="topic-icon"><i class="fas fa-baby"></i></div>
+                        <div style="flex:1;">
+                            <span class="topic-text">Teknik Menyusui</span>
+                            <div style="font-size: 0.75rem; color: #888;">Posisi & pelekatan yang benar</div>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                    
+                    <a href="https://drive.google.com/drive/folders/1nJq0KiY8qUeJUxDtuv_NpjdsFPKnohRF?usp=drive_link" class="topic-link" target="_blank">
+                        <div class="topic-icon"><i class="fas fa-spa"></i></div>
+                        <div style="flex:1;">
+                            <span class="topic-text">Pijat Oksitosin</span>
+                            <div style="font-size: 0.75rem; color: #888;">Pijat punggung pelancar ASI</div>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+
+                    <a href="https://drive.google.com/drive/folders/1A_1DVWY1xK9tW3ghuZXA1CPoo6FXdjD5?usp=drive_link" class="topic-link" target="_blank">
+                        <div class="topic-icon"><i class="fas fa-clipboard-check"></i></div>
+                        <div style="flex:1;">
+                            <span class="topic-text">Tanda Bayi Cukup ASI</span>
+                            <div style="font-size: 0.75rem; color: #888;">Ciri-ciri bayi kenyang & sehat</div>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+
+                    <a href="https://drive.google.com/drive/folders/19406Bndy2r4iMEiWb6CeZfs2CY_wtyJO?usp=drive_link" class="topic-link" target="_blank">
+                        <div class="topic-icon"><i class="fas fa-medkit"></i></div>
+                        <div style="flex:1;">
+                            <span class="topic-text">Perawatan Puting Lecet</span>
+                            <div style="font-size: 0.75rem; color: #888;">Solusi & perawatan nyeri menyusui</div>
+                        </div>
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- BANTUAN SECTION -->
+        <div id="bantuan" class="content-section">
+            <div class="card" style="text-align: center; padding: 40px 20px;">
+                <div style="width: 100px; height: 100px; background: #e8f5e9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto;">
+                    <i class="fas fa-user-nurse" style="font-size: 3.5rem; color: var(--sage-text);"></i>
+                </div>
+                <h3 style="color: var(--sage-text);">Butuh Bantuan Bidan?</h3>
+                <p style="font-size: 0.95rem; margin: 15px 0 25px 0; color: #666;">Jika Bunda merasa cemas, mengalami keluhan medis, atau butuh teman bicara profesional, jangan ragu untuk menghubungi kami.</p>
+                <a href="https://wa.me/628123456789" class="btn-submit" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; background: #25D366;">
+                    <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i> Chat Bidan Sekarang
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHATBOT -->
+    <div class="chat-float-btn" onclick="toggleChat()">
+        <i class="fas fa-comment-dots"></i>
+    </div>
+    
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <span style="display:flex; align-items:center; gap:8px;"><i class="fas fa-robot"></i> Asisten Bidan</span> 
+            <span style="cursor: pointer; opacity: 0.7;" onclick="toggleChat()"><i class="fas fa-times"></i></span>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="msg bot">Halo Bunda! Saya asisten virtual. Ketik kata kunci seperti <b>"darah"</b>, <b>"pusing"</b>, atau <b>"ASI"</b> untuk info cepat.</div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="chatInput" class="chat-input" placeholder="Tulis keluhan..." onkeypress="handleEnter(event)">
+            <button class="chat-send" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="navTo('beranda', this)"><i class="fas fa-home"></i><span>Beranda</span></div>
+        <div class="nav-item" onclick="navTo('materi', this)"><i class="fas fa-book-open"></i><span>Materi</span></div>
+        <div class="nav-item" onclick="navTo('bantuan', this)"><i class="fas fa-headset"></i><span>Bantuan</span></div>
+    </nav>
+
+    <!-- TOAST ELEMENT -->
+    <div id="toast">Pesan Notifikasi</div>
+
+    <script>
+        // DATA EVALUASI MEDIS
+        const medisData = {
+            0: {
+                title: "Risiko Hemoragi",
+                risk: "Kehilangan darah berlebih (>500ml) bisa berbahaya. Jika pembalut penuh kurang dari 1 jam, ini tanda bahaya.",
+                normal: "Normal: Darah merah di 1-3 hari, lalu memudar. Ganti pembalut tiap 3-4 jam."
+            },
+            1: {
+                title: "Risiko Infeksi (Sepsis)",
+                risk: "Demam >38°C + menggigil bisa menandakan infeksi rahim atau payudara.",
+                normal: "Normal: Suhu 36.5 - 37.5°C. Agak hangat wajar saat ASI deras, tapi tidak menggigil."
+            },
+            2: {
+                title: "Risiko Endometritis",
+                risk: "Cairan berbau busuk/nanah adalah tanda infeksi bakteri di rahim.",
+                normal: "Normal: Bau darah nifas khas (amis darah), tidak menyengat busuk."
+            },
+            3: {
+                title: "Gejala Pre-eklampsia",
+                risk: "Pusing hebat + pandangan kabur pasca salin bisa jadi tanda tensi tinggi berbahaya.",
+                normal: "Normal: Pusing ringan kurang tidur wajar, tapi pandangan tetap jelas."
+            }
+        };
+
+        // UI FUNCTIONS
+        function showToast(message) {
+            const x = document.getElementById("toast");
+            x.innerText = message;
+            x.className = "show";
+            setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+        }
+
+        function evaluasiKondisi() {
+            const checks = document.querySelectorAll('.danger-check:checked');
+            const resDiv = document.getElementById('evalResult');
+            
+            // Animasi reset
+            resDiv.style.opacity = '0';
+            setTimeout(() => {
+                resDiv.innerHTML = "";
+                resDiv.style.display = "block";
+                
+                if(checks.length === 0) {
+                    resDiv.innerHTML = `
+                    <div class="result-box result-safe">
+                        <span class="res-title" style="color:var(--safe-blue)"><i class="fas fa-check-circle"></i> Kondisi Terpantau Aman</span>
+                        <p class="res-desc">Alhamdulillah, tidak ada tanda bahaya yang terdeteksi. Lanjutkan istirahat, makan bergizi, dan konsumsi vitamin nifas ya, Bunda.</p>
+                        <div class="res-normal">Semangat mengasihi! 🤱</div>
+                    </div>`;
+                } else {
+                    let content = `<h4 style="color:#c0392b; margin-bottom:15px;">⚠️ Hasil Analisa Medis:</h4>`;
+                    checks.forEach(chk => {
+                        const data = medisData[chk.value];
+                        content += `
+                        <div class="result-box result-danger">
+                            <span class="res-title" style="color:#c0392b"><i class="fas fa-exclamation-triangle"></i> ${data.title}</span>
+                            <p class="res-desc"><strong>Risiko:</strong> ${data.risk}</p>
+                            <div class="res-normal"><i class="fas fa-info-circle"></i> ${data.normal}</div>
+                        </div>`;
+                    });
+                    content += `<a href="https://wa.me/628123456789" class="btn-submit" style="background:#c0392b; margin-top:5px; text-decoration:none; display:block; text-align:center;">HUBUNGI BIDAN SEKARANG</a>`;
+                    resDiv.innerHTML = content;
+                }
+                
+                // Fade in animation
+                setTimeout(() => { resDiv.style.opacity = '1'; }, 50);
+                resDiv.scrollIntoView({behavior: "smooth", block: "nearest"});
+            }, 200);
+        }
+
+        function navTo(id, el) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.getElementById('formId').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const day = document.getElementById('inDay').value;
+            const name = document.getElementById('inName').value;
+            
+            if(!name) { showToast("Mohon isi nama Bunda"); return; }
+            
+            document.getElementById('modalId').style.display = 'none';
+            document.getElementById('userLabel').innerText = "Bunda " + name;
+            document.getElementById('displayDay').innerText = day;
+            
+            // Animate progress bar
+            setTimeout(() => {
+                const percent = Math.min((day / 42) * 100, 100);
+                document.getElementById('barProg').style.width = percent + "%";
+            }, 500);
+            
+            const sisa = 42 - day;
+            document.getElementById('remindDay').innerText = sisa > 0 ? `Sisa ${sisa} hari lagi menuju pemulihan sempurna.` : "Masa nifas telah selesai! Selamat!";
+            
+            showToast("Selamat datang, Bunda " + name + "!");
+        });
+
+        function saveJurnal() {
+            const asi = document.getElementById('jurnalAsi').value;
+            if(!asi) { 
+                showToast("Mohon isi frekuensi menyusui!"); 
+                document.getElementById('jurnalAsi').focus();
+                return; 
+            }
+            showToast("✅ Jurnal harian berhasil disimpan!");
+        }
+
+        // CHATBOT LOGIC
+        function toggleChat() {
+            const w = document.getElementById('chatWindow');
+            if (w.style.display === 'flex') {
+                w.style.display = 'none';
+            } else {
+                w.style.display = 'flex';
+                document.getElementById('chatInput').focus();
+            }
+        }
+        
+        function handleEnter(e) { if(e.key === 'Enter') sendMessage(); }
+        
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim().toLowerCase();
+            const body = document.getElementById('chatBody');
+            
+            if(text === "") return;
+
+            body.innerHTML += `<div class="msg user">${input.value}</div>`;
+            input.value = "";
+            body.scrollTop = body.scrollHeight;
+
+            let reply = "Maaf, saya bot otomatis. Untuk diagnosa tepat, silakan menu 'Bantuan' untuk chat Bidan asli.";
+            
+            if(text.includes('darah') || text.includes('merah')) reply = "Darah nifas (Lochea) normalnya keluar 4-6 minggu. Awalnya merah, lalu kuning/putih. Jika keluar gumpalan besar > telur ayam, segera periksa.";
+            else if(text.includes('asi') || text.includes('susu')) reply = "Agar ASI lancar: 1. Susui sesering mungkin (on demand). 2. Minum 3L air/hari. 3. Pijat oksitosin punggung. Jangan stres ya Bun!";
+            else if(text.includes('pusing') || text.includes('sakit kepala')) reply = "Pusing bisa karena kurang tidur (anemia) atau tensi tinggi. Jika disertai pandangan kabur & nyeri ulu hati, waspada Pre-eklampsia.";
+            else if(text.includes('jahit') || text.includes('perih')) reply = "Untuk luka jahitan: Jaga tetap kering, ganti pembalut tiap 4 jam, makan telur/ikan gabus (protein tinggi) agar cepat kering.";
+            else if(text.includes('sedih') || text.includes('nangis')) reply = "Merasa sedih itu wajar (Baby Blues) karena hormon turun drastis. Cerita ke suami, istirahat saat bayi tidur, dan jangan pendam sendiri ya.";
+            else if(text.includes('terima kasih') || text.includes('makasih')) reply = "Sama-sama Bunda! Sehat selalu yaa 🥰";
+
+            setTimeout(() => {
+                body.innerHTML += `<div class="msg bot">${reply}</div>`;
+                body.scrollTop = body.scrollHeight;
+            }, 800);
+        }
+    </script>
+</body>
+</html>
